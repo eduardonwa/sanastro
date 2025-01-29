@@ -1,21 +1,36 @@
 ---
 import { createSanityClient } from '../../../sanastro/sanityClient.js';
+import { createSanityClientServer } from '../../../sanastro/sanityClientServer.js'; // Importa el cliente para el servidor
 import { loadQuery } from "../../../sanastro/lib/load-query";
 import PortableText from "../../components/PortableText.astro";
 import Layout from "../../layouts/Layout.astro";
 
-const client = createSanityClient();
-const query = `*[_type == "post" && slug.current == $slug && !(_id in path('drafts.*'))][0]`;
-const params = Astro.params;
+const draftMode = Astro.cookies.get('draftMode')?.value === 'true';
+let client;
+let query;
+let params = Astro.params;
+
+if (import.meta.env.SSR) { // Server-side rendering
+  if (draftMode) {
+    client = createSanityClientServer(); // Cliente con token (para el estudio)
+    query = `*[_type == "post" && slug.current == $slug][0]`; // Incluye borradores
+  } else {
+    client = createSanityClient(); // Cliente sin token (para el cliente)
+    query = `*[_type == "post" && slug.current == $slug && !(_id in path('drafts.*'))][0]`; // Excluye borradores
+  }
+} else { // Client-side rendering
+  client = createSanityClient(); // Cliente sin token (para el cliente)
+  query = `*[_type == "post" && slug.current == $slug && !(_id in path('drafts.*'))][0]`; // Excluye borradores
+}
 
 const { data: post } = await loadQuery({ query, params, client });
 
 if (!post) {
-  return Astro.redirect('/404');
+  return Astro.redirect('/404'); // Manejo de 404
 }
 ---
 
 <Layout>
-    <h1>A post about {post.title}</h1>
-    <PortableText portableText={post.body} />
+  <h1>A post about {post.title}</h1>
+  <PortableText portableText={post.body} />
 </Layout>
