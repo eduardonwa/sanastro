@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { validatePreviewUrl } from '@sanity/preview-url-secret';
-import { createSanityClientServer } from '../../../../sanastro/sanityClientServer';
+import { createSanityClientServer } from '../../../../sanastro/sanityClientServer.js';
 
 export const GET: APIRoute = async ({ request }) => {
   const client = createSanityClientServer();

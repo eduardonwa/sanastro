@@ -4,6 +4,7 @@ import {structureTool} from 'sanity/structure'
 import {schema} from "./sanastro/schemaTypes";
 import { presentationTool } from "sanity/presentation";
 import { resolve } from "./sanastro/lib/resolve";
+import {visionTool} from '@sanity/vision'
 
 export default defineConfig({
   name: 'san-astro',
@@ -12,6 +13,7 @@ export default defineConfig({
   dataset: import.meta.env.PUBLIC_SANITY_DATASET,
   plugins: [
     structureTool(),
+    visionTool(),
     presentationTool({
       resolve,
       previewUrl: {
