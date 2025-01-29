@@ -1,0 +1,21 @@
+---
+import { createSanityClient } from '../../../sanastro/sanityClient.js';
+import { loadQuery } from "../../../sanastro/lib/load-query";
+import PortableText from "../../components/PortableText.astro";
+import Layout from "../../layouts/Layout.astro";
+
+const client = createSanityClient();
+const query = `*[_type == "post" && slug.current == $slug && !(_id in path('drafts.*'))][0]`;
+const params = Astro.params;
+
+const { data: post } = await loadQuery({ query, params, client });
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+---
+
+<Layout>
+    <h1>A post about {post.title}</h1>
+    <PortableText portableText={post.body} />
+</Layout>
