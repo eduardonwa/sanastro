@@ -1,15 +1,42 @@
-import { createClient, type QueryParams } from '@sanity/client'; // Importa desde @sanity/client
+import { type QueryParams } from "sanity";
+import { sanityClient } from "sanity:client";
 
-export async function loadQuery<T>({
+const visualEditingEnabled =
+  import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === "true";
+const token = import.meta.env.SANITY_API_READ_TOKEN;
+
+export async function loadQuery<QueryResponse>({
   query,
   params,
-  client,
 }: {
   query: string;
   params?: QueryParams;
-  client: ReturnType<typeof createClient>; // Tipa client correctamente
-}): Promise<{ data: T }> {
-  const data = await client.fetch<T>(query, params ?? {});
+}) {
 
-  return { data };
+  if (visualEditingEnabled && !token) {
+    throw new Error(
+      "The `SANITY_API_READ_TOKEN` environment variable is required during Visual Editing.",
+    );
+  }
+
+  const perspective = visualEditingEnabled ? 'previewDrafts' : 'published'
+  console.log('Using perspective:', perspective);
+
+  const { result, resultSourceMap } = await sanityClient.fetch<QueryResponse>(
+    query,
+    params ?? {},
+    {
+      filterResponse: false,
+      perspective,
+      resultSourceMap: visualEditingEnabled ? "withKeyArraySelector" : false,
+      stega: visualEditingEnabled,
+      ...(visualEditingEnabled ? { token } : {}),
+    },
+  );
+
+  return {
+    data: result,
+    sourceMap: resultSourceMap,
+    perspective,
+  };
 }

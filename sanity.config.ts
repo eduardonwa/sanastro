@@ -2,8 +2,8 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {schema} from "./sanastro/schemaTypes";
-import { presentationTool } from "sanity/presentation";
-import { resolve } from "./sanastro/lib/resolve";
+import {presentationTool} from "sanity/presentation";
+import {resolve} from "./sanastro/lib/resolve";
 import {visionTool} from '@sanity/vision'
 
 export default defineConfig({

@@ -1,5 +1,12 @@
 {
-  "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "compilerOptions": {
+    "baseUrl": "src/",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@utils/*": ["utils/*"]
+    }
+  },
+  "extends": "astro/tsconfigs/strict", // Al mismo nivel que compilerOptions
+  "include": [".astro/types.d.ts", "**/*", "src"], // Al mismo nivel que compilerOptions
+  "exclude": ["dist"] // Al mismo nivel que compilerOptions
 }
