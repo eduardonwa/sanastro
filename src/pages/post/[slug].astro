@@ -1,7 +1,7 @@
 ---
 import SanityPost from '../../components/SanityPost.jsx';
 
-const params = Astro.params;
+const {slug} = Astro.params;
 ---
 
-<SanityPost slug={params.slug} />
+<SanityPost slug={slug} />
